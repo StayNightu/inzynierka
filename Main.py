@@ -1,6 +1,10 @@
 import sys
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QTextBrowser, QLabel
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QTextBrowser, QLabel, \
+    QSizePolicy, QHBoxLayout
+from PyQt6.QtGui import QPixmap
+
+from BBox import BoundingBoxDrawer
 from Vplayer import Vplayer
 from Csv_file import Csv_file
 
@@ -11,38 +15,42 @@ class Main(QMainWindow):
         self.setWindowTitle("Glowne Okno")
         self.setGeometry(100, 100, 600, 400)
 
+        # Create instances of your widgets
         csv_widget = Csv_file()
-        csv_widget.csv_file()
-
-        csv_label = QLabel(self)
-        csv_label.setText(csv_widget.text_browser.toPlainText())
-        csv_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-
         video_widget = Vplayer()
-        video_label = QLabel(self)
-        video_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        widget = QWidget()
 
-        control_widget = QWidget(self)
-        control_layout = QVBoxLayout(control_widget)
+        # Adjust the size and policies for the csv_widget's QTextBrowser
+        csv_widget.text_browser.setFixedSize(250, 250)
+        csv_widget.text_browser.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
-        start_button = video_widget.start_button
-        stop_button = video_widget.stop_button
-        restart_button = video_widget.restart_button
-        csv_file = csv_widget.csv_file()
-
-        control_layout.addWidget(start_button)
-        control_layout.addWidget(stop_button)
-        control_layout.addWidget(restart_button)
-        control_layout.addWidget(csv_file)
-
+        # Create main layout and sub-layouts
         main_layout = QVBoxLayout()
-        main_layout.addWidget(csv_label)
-        main_layout.addWidget(video_widget)
-        main_layout.addWidget(control_widget)
+        top_layout = QHBoxLayout()
+        layout = QVBoxLayout(widget)
 
+        # Add video widget and a stretchable space in the top layout.
+        # The stretchable space pushes the CSV display to the right.
+        top_layout.addWidget(video_widget)
+        top_layout.addStretch(1)
+        top_layout.addWidget(csv_widget.text_browser)
+
+        box_drawer = BoundingBoxDrawer()
+        box_drawer.setPixmap(QPixmap("test_image.jpg"))  # Załaduj przykładowy obraz.
+        box_drawer.setFixedSize(QSize(640, 480))
+
+        layout.addWidget(box_drawer)
+
+
+
+        # Add top_layout to main_layout
+        main_layout.addLayout(top_layout)
+        main_layout.addLayout(layout)
+        # Other widgets can be added to the main_layout here, if needed
+
+        # Set the central widget
         container = QWidget()
         container.setLayout(main_layout)
-
         self.setCentralWidget(container)
 
 if __name__ == '__main__':

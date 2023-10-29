@@ -6,8 +6,9 @@ class Csv_file(QWidget):
     def __init__(self):
         super().__init__()
         self.text_browser = QTextBrowser()
+        self.csv_display()
 
-    def csv_file(self):
+    def csv_display(self):
         csv_file_path = './1.csv'
         try:
             with open(csv_file_path, mode='r', newline='') as file:
@@ -18,7 +19,7 @@ class Csv_file(QWidget):
                 self.text_browser.setPlainText(data)
 
         except FileNotFoundError:
-            self.text_browser.setPlainText(print(f"Nie znaleziono: {csv_file_path}"))
+            self.text_browser.setPlainText(f"Nie znaleziono: {csv_file_path}")
         except Exception as e:
-            self.text_browser.setPlainText(print(f"Blad: {e=}"))
+            self.text_browser.setPlainText(f"Blad: {e}")
 
